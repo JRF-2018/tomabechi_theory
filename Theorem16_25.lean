@@ -1,0 +1,19 @@
+import Theorem16_25_Core
+import Theorem16_25_Model
+
+#print axioms Tomabechi.Theorem16_25.theorem16_represented_fixedPoint_of_continuous_inverseLimitMap
+
+#print axioms Tomabechi.Theorem16_25.history_represented_fixedPoints_of_equivariance
+
+#print axioms Tomabechi.Theorem16_25.contraction_iterates_dist_le_initial_fixedPoint
+#print axioms Tomabechi.Theorem16_25.represented_unique_fixedPoint_and_geometricIterates_of_contraction
+
+#print axioms Tomabechi.Theorem16_25.history_fixedPoints_geometric_and_represented
+
+#print axioms Tomabechi.Theorem16_25.theorem16_25_geometricRepresentation_conditionalProofCore
+
+#print axioms Tomabechi.Theorem16_25.historyContinuousInverseLimit_fixedPoints_data
+
+#print axioms Tomabechi.Theorem16_25.historyFixedPointsOfCarrierContractions
+
+#print axioms Tomabechi.Theorem16_25.theorem16HistoryLayerSystem_to_theorem25_fullConnection

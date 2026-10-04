@@ -1,0 +1,15 @@
+# Lake build output and downloaded dependencies (can be several gigabytes).
+/.lake/
+
+# Editor and operating-system metadata.
+.DS_Store
+Thumbs.db
+.vscode/
+__pycache__/
+
+# Editor backup files.
+*~
+
+# Emacs autosave and lock files.
+\#*\#
+.\#*

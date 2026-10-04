@@ -1,0 +1,14 @@
+import Tomabechi.Theorem27.Abstract
+import Tomabechi.Theorem27.Actuator
+import Tomabechi.Theorem27.Connection
+
+
+#print axioms Tomabechi.Theorem27.Actuator.upperRightDiniDerivative_le_of_rightSlopeBound_of_lowerBound
+#print axioms Tomabechi.Theorem27.Actuator.ae_upperRightDiniDerivative_eq_deriv_on_future
+#print axioms Tomabechi.Theorem27.Actuator.ae_closedLoop_descent_formula_of_ode_under_measure
+#print axioms Tomabechi.Theorem27.Actuator.ae_control_difference_distance_lower_bound_of_dini_on_future
+#print axioms Tomabechi.Theorem27.Actuator.adjoint_norm_bound_implies_inner_action_bound
+#print axioms Tomabechi.Theorem27.Actuator.ae_inner_action_bound_of_adjoint_norm_bound
+#print axioms Tomabechi.Theorem27.Actuator.ae_inner_action_bound_of_adjoint_norm_bound_on
+#print axioms Tomabechi.Theorem27.Actuator.stateGradientFromFDeriv_inner
+#print axioms Tomabechi.Theorem27.Actuator.jointDerivativeOnPath_hasFDerivAt_of_contDiffAt

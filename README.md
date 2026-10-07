@@ -83,6 +83,7 @@ lake build Tomabechi    # 全体のビルド
 * `docs/*_textbook.md`：`.lean` ファイルごとの、初学者向けの解説書。すべての補題・定義を出現順に、式・コメントの日本語訳・説明・証明の概略とともに書いてあります（ファイル名は `.lean` のパスの `/` を `_` に替えたもの。たとえば `Tomabechi/Dynamics/GradientFlow.lean` → `docs/Tomabechi_Dynamics_GradientFlow_textbook.md`）。式や証明の概略は `.lean` の型と証明から読み取った近似なので、厳密な内容は `.lean` を確認してください。
 * [examples/LEAN_CORRESPONDENCE.md](examples/LEAN_CORRESPONDENCE.md)：各 Python 例について、Lean で何を証明し（証明済・部分）、何を証明していないかの対応表。
 * `examples/*.py` と `examples/*.ipynb`：各定理の最小の説明用トイ例（Python）。`.ipynb` は、式の再説明・記号対応・図の読み方・仏教的な意義（解釈と明記）・Lean との対応を付けた解説つきの notebook です。数値シミュレーションは挙動の探索・可視化で、証明ではありません。
+* [examples/consistency_shared_model.ipynb](examples/consistency_shared_model.ipynb)：無矛盾性の証明で作った共有モデルの部品を、Python で数値的に再現した解説つき notebook（証明ではありません）。
 
 ## 今後の課題
 

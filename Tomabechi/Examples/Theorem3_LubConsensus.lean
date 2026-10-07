@@ -278,6 +278,43 @@ theorem python_instance (hη : 0 < η) (hγ : 0 < γ) (i : Fin 3) :
     rw [hev.deriv_eq, (hasDerivAt_PhiF η γ s).deriv, potential_eq η γ hη hγ s hsI.1]
     exact PhiF_decay η γ hη hγ s
 
+/-- 同じ実LUB・同じ抽象残差・同じflowについて、定理3入口の定量評価を得る。 -/
+theorem python_instance_quantitative (hη : 0 < η) (hγ : 0 < γ)
+    (i : Fin 3) (t : ℝ) (ht : 0 ≤ t) :
+    Metric.infDist (fun j => traj η γ j t) (TCZ η γ t) ≤
+        Real.sqrt ((1 / η) * Dsys.potential (traj η γ) (sharedT η γ) (fun _ => η) 0) *
+          Real.exp (-(4 * η) * (t - 0)) ∧
+      euclideanCoordinateNorm
+        (Dsys.ι (Dsys.abstraction i (traj η γ i t)) - Dsys.ι Dsys.lub) ≤
+        Real.sqrt (Dsys.potential (traj η γ) (sharedT η γ) (fun _ => η) 0 / η) *
+          Real.exp (-(4 * η) * (t - 0)) := by
+  refine Dsys.theorem3_two_distance_bounds_of_ac_ae_descent
+    (traj η γ) (TCZ η γ) (sharedT η γ) (fun _ => η) i
+    (4 * η) (1 / η) 0 t hη (by positivity) (by positivity) ht
+    (fun s _ => sharedT_nonneg η γ hγ s)
+    (fun s _ j => by
+      have hr := AbstractSharedSystem.abstractResidual_nonneg Dsys j (traj η γ j s)
+      positivity)
+    (fun s _ => ⟨_, Lcfg_mem η γ s⟩) ?_ ?_
+    (fun s hs => error_bound η γ hη hγ s hs.1)
+  · have hpot : Set.EqOn (PhiF η γ)
+        (Dsys.potential (traj η γ) (sharedT η γ) (fun _ => η)) (Set.uIcc 0 t) := by
+      intro u hu
+      rw [Set.uIcc_of_le ht] at hu
+      exact (potential_eq η γ hη hγ u hu.1).symm
+    exact (contDiff_PhiF η γ).contDiffOn.absolutelyContinuousOnInterval.congr hpot
+  · rw [MeasureTheory.ae_restrict_iff' measurableSet_Icc]
+    filter_upwards [(Set.countable_singleton (0 : ℝ)).ae_notMem MeasureTheory.volume]
+      with s hs0 hsI
+    have hspos : 0 < s := lt_of_le_of_ne hsI.1 (fun h => hs0 (by simp [← h]))
+    have hev : Dsys.potential (traj η γ) (sharedT η γ) (fun _ => η) =ᶠ[nhds s]
+        PhiF η γ := by
+      filter_upwards [Ioi_mem_nhds hspos] with u hu
+      exact potential_eq η γ hη hγ u (le_of_lt hu)
+    rw [hev.deriv_eq, (hasDerivAt_PhiF η γ s).deriv,
+      potential_eq η γ hη hγ s hsI.1]
+    exact PhiF_decay η γ hη hγ s
+
 end Main
 
 end Tomabechi.Examples.Theorem3

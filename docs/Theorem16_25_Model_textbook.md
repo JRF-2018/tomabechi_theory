@@ -3761,6 +3761,56 @@ $$F=\text{勾配流の固定点族}$$
 
 ----
 
+<a id="Tomabechi.Theorem16_25.theorem25_intervalGradientFlowRandomizedSelfProcessSCM"></a>
+
+## 定義 `theorem25_intervalGradientFlowRandomizedSelfProcessSCM`
+
+### 式
+
+$$
+\text{共有 SCM の外生法則・履歴・候補・状態出力の構造式}\ \Rightarrow\ \text{25-A(2) の自己過程 SCM}
+$$
+
+### Lean のコメント（日本語訳）
+
+> 同じ履歴別固定点 C3-SCM を、25-A(2) の自己過程 SCM として読む射影。外生法則・履歴変数・候補変数・状態出力の構造式を、元の共有 SCM からそのまま取る。
+
+### 定義の説明
+
+上の勾配流の固定点族から作った**共有 SCM**（`theorem25_intervalGradientFlowRandomizedMeasuredC3Model`）を、定理 25 の条件 25-A(2) を述べるための**自己過程 SCM**（`Theorem25SelfProcessSCM`）として読み替えます。外生の法則・入力の履歴の変数・候補の変数・状態と出力の構造式は、すべて元の共有 SCM のものを**そのまま**使い、別の SCM を作り直しません（主体 \(d\)・行為 \(a\) は `false` に固定して取り出します）。基準の方程式は、候補変数を出力方程式に入れたもの、介入した方程式は、候補を任意の値 \(s\) に置き換えたものです。
+
+### 証明の概略
+
+1. 各フィールドに、元の共有 SCM の対応するフィールド（外生法則・`globalHistory`・`candidateVariable`・`stateEquation`・`outputEquation`・可測性の補題）を代入する。
+
+----
+
+<a id="Tomabechi.Theorem16_25.theorem25_intervalGradientFlowRandomizedSelfProcessSCM_satisfies25A2"></a>
+
+## 定理 `theorem25_intervalGradientFlowRandomizedSelfProcessSCM_satisfies25A2`
+
+### 式
+
+$$
+\mathrm{Condition25A2}:\quad \text{候補への介入は }(\Gamma,Y^+)\text{ の同時法則を変えない}
+$$
+
+### Lean のコメント（日本語訳）
+
+> 上の射影で定理 25-A(2) を証明する。候補と入力履歴は同じ積確率空間の独立座標であり、介入前後の状態・出力は固定点符号化で一致する。
+
+### 補題の説明
+
+上の自己過程 SCM について、条件 **25-A(2)** が成り立つことです。候補（二値）と入力の履歴は、同じ積の確率空間（一様測度の積）の**独立な座標**です。介入した方程式と、基準の方程式は、状態が履歴だけで決まり、出力も固定点の符号化で履歴に一致するので、候補を置き換えても、\((\Gamma,Y^+)\) の同時法則は変わりません。
+
+### 証明の概略
+
+1. 25-A(2) を与える一般の補題 `condition25A2` を適用する。
+2. 候補と履歴が独立であること：一様測度の積の座標なので、`indepFun_prod`。
+3. 介入前後の同時法則の一致：二つの像の測度が、各点で（出力が候補に依らず固定点の値である）等しいので、`map_congr`。点ごとの等式は、固定点の座標の補題（`theorem16_intervalGradientFlowFixedPoint_coordinate`）による。
+
+----
+
 <a id="Tomabechi.Theorem16_25.theorem25_intervalGradientFlowRandomizedMeasuredC3Model_noAtman"></a>
 
 ## 定理 `theorem25_intervalGradientFlowRandomizedMeasuredC3Model_noAtman`
@@ -4886,6 +4936,80 @@ $$Y^+(d,a,h,u,s)=x^\ast_h$$
 
 ----
 
+<a id="Tomabechi.Theorem16_25.theorem25_historyDependentFixedPointSharedSCM_output_is_inverseLimitFixedPoint"></a>
+
+## 定理 `theorem25_historyDependentFixedPointSharedSCM_output_is_inverseLimitFixedPoint`
+
+### 式
+
+$$
+Y^+(d,a,h,u,s)=\bigl[\,x^\ast_h(0)=1\,\bigr]
+$$
+
+### Lean のコメント（日本語訳）
+
+> 定理 16 の履歴別逆極限固定点を Bool 出力へ読むと、25 の SCM が同じ履歴で記録する固定点出力と一致する。出力の二値化は第 0 層が 1 であるかで行う。
+
+### 補題の説明
+
+定理 16 の**履歴別の逆極限の固定点**を、第 0 層の値が 1 かどうかで二値化（Bool に）すると、25 の SCM が同じ履歴で記録している固定点の出力と**一致**します。つまり、25 の SCM の出力は、定理 16 の層系から得た固定点の値の、二値化そのものです。
+
+### 証明の概略
+
+1. 出力方程式が履歴 \(h\) を返すことを展開する。
+2. 履歴で場合分けして、固定点の第 0 座標が履歴の中心（0 または 1）であること（`theorem16_intervalGradientFlowFixedPoint_coordinate`・`theorem16_intervalGradientCenter`）から、二値化と一致することを `simp` で示す。
+
+----
+
+<a id="Tomabechi.Theorem16_25.theorem25_historyDependentFixedPointSharedSCM_inverseLimitOutputs_separate"></a>
+
+## 定理 `theorem25_historyDependentFixedPointSharedSCM_inverseLimitOutputs_separate`
+
+### 式
+
+$$
+\bigl[x^\ast_{\text{false}}(0)=1\bigr]\ne\bigl[x^\ast_{\text{true}}(0)=1\bigr]
+$$
+
+### Lean のコメント（日本語訳）
+
+> 履歴ごとの逆極限固定点は実際に異なり、25-SCM の出力二値化も異なる。この等式は、別に作った Bool 固定点の族ではなく定理 16 の層系から得た値を使う。
+
+### 補題の説明
+
+二つの履歴の逆極限の固定点は実際に**異なり**、その第 0 層での二値化（25 の SCM の出力）も異なります。この結論は、別に作った Bool の固定点の族ではなく、**定理 16 の層系から得た値**を使っています。
+
+### 証明の概略
+
+1. 固定点の第 0 座標が履歴の中心であること（false で 0、true で 1）を代入し、二値化が `false ≠ true` になることを `simp` で示す。
+
+----
+
+<a id="Tomabechi.Theorem16_25.theorem25_historyDependentFixedPointSharedSCM_satisfies_selfProcessA2"></a>
+
+## 定理 `theorem25_historyDependentFixedPointSharedSCM_satisfies_selfProcessA2`
+
+### 式
+
+$$
+\mathrm{intervenedJointLaw}(d,a,h,s)=\mathrm{baselineJointLaw}(d,a,h)
+$$
+
+### Lean のコメント（日本語訳）
+
+> 同じ履歴付き SCM では、任意の主体・層・履歴で候補介入が `(Γ,Y⁺)` の同時法則を変えない。したがって固定点由来の出力接続と 25-A(2) が両立する。
+
+### 補題の説明
+
+同じ履歴つきの SCM について、任意の主体・層・履歴で、候補を介入で置き換えても、\((\Gamma,Y^+)\) の同時法則が変わりません（25-A(2) の内容）。したがって、**固定点から得た出力の接続**と **25-A(2)** は両立します。
+
+### 証明の概略
+
+1. 二つの同時法則が、同じ確率空間（一様測度の積）の像として等しいことを示す（`Subtype.ext`）。
+2. 状態は関係状態 `relationalState d h a`、出力は履歴 \(h\) で、どちらも候補・介入値に依らないので、像を取る写像が（定義的に）一致し、`rfl`。
+
+----
+
 <a id="Tomabechi.Theorem16_25.theorem25_historyDependentFixedPointSharedSCM_state_is_relationalState"></a>
 
 ## 定理 `theorem25_historyDependentFixedPointSharedSCM_state_is_relationalState`
@@ -5372,9 +5496,9 @@ $$\Gamma=\text{（物理層・上位層をもつ 2 層格子上の状態）}$$
 
 ----
 
-<a id="Tomabechi.Theorem16_25.instance@L4666"></a>
+<a id="Tomabechi.Theorem16_25.instance@L4777"></a>
 
-## インスタンス `instance@L4666`
+## インスタンス `instance@L4777`
 
 ### 式
 

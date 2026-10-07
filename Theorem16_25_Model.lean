@@ -2887,6 +2887,77 @@ noncomputable def theorem25_intervalGradientFlowRandomizedMeasuredC3Model :
   have hx := theorem16_intervalGradientFlowFixedPoint_coordinate h 0
   cases h <;> simp [hx, theorem16_intervalGradientCenter]
 
+/-- 同じ履歴別固定点C3-SCMを、25-A(2)の自己過程SCMとして読む射影。
+外生法則・履歴変数・候補変数・状態出力の構造式を元の共有SCMからそのまま取る。 -/
+noncomputable def theorem25_intervalGradientFlowRandomizedSelfProcessSCM :
+    Theorem25SelfProcessSCM Bool (Bool × Bool)
+      Theorem25HistoryDependentGamma Bool Bool where
+  exogenousLaw := theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.exogenousLaw
+  inputHistory := theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.globalHistory
+  candidateVariable := fun u =>
+    (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm).candidateVariable
+      false false u
+  inputHistoryAEMeasurable :=
+    theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.globalHistoryAEMeasurable
+  candidateAEMeasurable :=
+    theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.candidateVariableAEMeasurable
+      false false
+  baselineEquation := fun h u =>
+    (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.stateEquation
+        false false h u,
+      theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.outputEquation
+        false false h u
+        (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.candidateVariable
+          false false u))
+  intervenedEquation := fun h s u =>
+    (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.stateEquation
+        false false h u,
+      theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.outputEquation
+        false false h u s)
+  baselineAEMeasurable :=
+    theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.baselineJointAEMeasurable
+      false false
+  intervenedAEMeasurable := fun h s =>
+    theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.intervenedJointAEMeasurable
+      false false h s
+
+/-- 上の射影で定理25-A(2)を証明する。候補と入力履歴は同じ積確率空間の
+独立座標であり、介入前後の状態・出力は固定点符号化で一致する。 -/
+theorem theorem25_intervalGradientFlowRandomizedSelfProcessSCM_satisfies25A2 :
+    theorem25_intervalGradientFlowRandomizedSelfProcessSCM.toLawModel.Condition25A2 () := by
+  apply theorem25_intervalGradientFlowRandomizedSelfProcessSCM.condition25A2
+  · change ProbabilityTheory.IndepFun Prod.snd Prod.fst
+      ((ProbabilityTheory.uniformOn (Set.univ : Set Bool)).prod
+        (ProbabilityTheory.uniformOn (Set.univ : Set Bool)))
+    exact (ProbabilityTheory.indepFun_prod (X := id) (Y := id)
+      measurable_id measurable_id).symm
+  · intro h s
+    apply Subtype.ext
+    change ((ProbabilityTheory.uniformOn (Set.univ : Set Bool)).prod
+        (ProbabilityTheory.uniformOn (Set.univ : Set Bool))).map
+        (fun u : Bool × Bool =>
+          (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.stateEquation
+              false false h u,
+            theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.outputEquation
+              false false h u s)) =
+      ((ProbabilityTheory.uniformOn (Set.univ : Set Bool)).prod
+        (ProbabilityTheory.uniformOn (Set.univ : Set Bool))).map
+        (fun u : Bool × Bool =>
+          (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm.stateEquation
+              false false h u,
+            (theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm).outputEquation
+              false false h u
+                ((theorem25_intervalGradientFlowRandomizedMeasuredC3Model.model.scm).candidateVariable
+                  false false u)))
+    rw [MeasureTheory.Measure.map_congr]
+    exact Filter.Eventually.of_forall fun u => by
+      simp [theorem25_intervalGradientFlowRandomizedMeasuredC3Model,
+        theorem25_intervalRandomizedMeasuredC3Model_fromFixedPoints,
+        Theorem25MeasuredSharedGlobalHistoryC3Model.ofHistoryFixedPoints,
+        Theorem25SharedGlobalHistorySCM.ofHistoryFixedPoints,
+        theorem16_intervalGradientFlowFixedPoint_coordinate,
+        theorem16_intervalGradientCenter]
+
 theorem theorem25_intervalGradientFlowRandomizedMeasuredC3Model_noAtman :
     ∀ d a, ¬ (Theorem25ProbabilityCausalModel.toCausalModel
       ((Theorem25SharedGlobalHistorySCM.toIndexed
@@ -4016,6 +4087,46 @@ theorem theorem25_historyDependentFixedPointSharedSCM_output_is_fixedPoint :
       theorem25_historyDependentFixedPointSharedSCM.outputEquation d a h u s =
         (theorem25_historyIndexedBoolFixedPoints.fixedPoint h).1 := by
   intro d a h u s
+  rfl
+
+/-- 定理16の履歴別逆極限固定点をBool出力へ読むと、25のSCMが同じ履歴で
+記録する固定点出力と一致する。出力の二値化は第0層が1であるかで行う。 -/
+theorem theorem25_historyDependentFixedPointSharedSCM_output_is_inverseLimitFixedPoint :
+    ∀ d a h u s,
+      theorem25_historyDependentFixedPointSharedSCM.outputEquation d a h u s =
+        decide ((theorem16_intervalGradientFlowFixedPoints.fixedPoint h).1 0 = 1) := by
+  intro d a h u s
+  change h = decide ((theorem16_intervalGradientFlowFixedPoints.fixedPoint h).1 0 = 1)
+  cases h <;>
+    simp [theorem16_intervalGradientFlowFixedPoint_coordinate,
+      theorem16_intervalGradientCenter]
+
+/-- 履歴ごとの逆極限固定点は実際に異なり、25-SCMの出力二値化も異なる。
+この等式は、別に作ったBool固定点の族ではなく定理16の層系から得た値を使う。 -/
+theorem theorem25_historyDependentFixedPointSharedSCM_inverseLimitOutputs_separate :
+    decide ((theorem16_intervalGradientFlowFixedPoints.fixedPoint false).1 0 = 1) ≠
+      decide ((theorem16_intervalGradientFlowFixedPoints.fixedPoint true).1 0 = 1) := by
+  simp [theorem16_intervalGradientFlowFixedPoint_coordinate,
+    theorem16_intervalGradientCenter]
+
+/-- 同じ履歴付きSCMでは、任意の主体・層・履歴で候補介入が
+`(Γ,Y⁺)` の同時法則を変えない。したがって固定点由来の出力接続と25-A(2)が両立する。 -/
+theorem theorem25_historyDependentFixedPointSharedSCM_satisfies_selfProcessA2 :
+    ∀ d a h s,
+      (theorem25_historyDependentFixedPointSharedSCM.toIndexed.toProbabilityCausalModel).intervenedJointLaw
+          d a h s =
+        (theorem25_historyDependentFixedPointSharedSCM.toIndexed.toProbabilityCausalModel).baselineJointLaw
+          d a h := by
+  intro d a h s
+  apply Subtype.ext
+  change ((ProbabilityTheory.uniformOn (Set.univ : Set Bool)).prod
+      (ProbabilityTheory.uniformOn (Set.univ : Set Bool))).map
+      (fun u : Bool × Bool =>
+        (theorem25_historyDependentPresenceRelations.relationalState d h a, h)) =
+    ((ProbabilityTheory.uniformOn (Set.univ : Set Bool)).prod
+      (ProbabilityTheory.uniformOn (Set.univ : Set Bool))).map
+      (fun u : Bool × Bool =>
+        (theorem25_historyDependentPresenceRelations.relationalState d h a, h))
   rfl
 
 /-- 同SCMのΓ状態方程式は、25-B/C関係モデルから作る全C3状態そのもの。 -/

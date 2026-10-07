@@ -40,6 +40,7 @@ $$\Phi_3=\gamma\sum_{i<j}S_{ij}+\eta\sum_iA_i,\quad A_i=\|\iota(\varphi_i(x_i))-
 - **厳密解** \(x_{ik}(t)=1+y_{ik}(t)\)、\(y_{ik}=-\tfrac23a(t)+(\delta_{ik}-\tfrac13)b(t)\)、\(a=e^{-4\eta t}\)、\(b=e^{-4(\eta+3\gamma)t}\) を求め、**勾配流であること**、\([0,1]\) に留まることを証明。
 - \(\Phi_3(t)=4\eta a^2+2(\eta+3\gamma)b^2\)（閉形式）、したがって \(\Phi_3'\le-8\eta\Phi_3\)（\(c=4\eta\)）。
 - 一般定理 `AbstractSharedSystem.theorem3_two_distances_tendsto_of_ac_ae_descent` の**全前提**を満たし、共有零集合への距離と \(\|\iota(\varphi_i(x_i))-\iota(L^\ast)\|\) が 0 に収束。誤差境界は \(C=1/\eta\)。
+- 収束だけでなく、**各時刻の定量評価**（\(\mathrm{dist}\le\sqrt{\Phi_3(0)/\eta}\,e^{-4\eta t}\)）も得る（`python_instance_quantitative`）。
 
 ### 0.2 このファイルが証明していないこと
 
@@ -783,6 +784,30 @@ $$\mathrm{dist}\bigl(x(s),\mathrm{TCZ}\bigr)\to0\ \wedge\ \bigl\|\iota(\varphi_i
 
 ----
 
+<a id="Tomabechi.Examples.Theorem3.python_instance_quantitative"></a>
+
+## 定理 `python_instance_quantitative`
+
+### 式
+
+$$\mathrm{dist}\bigl(x(t),\mathrm{TCZ}\bigr)\le\sqrt{\tfrac1\eta\Phi_3(0)}\,e^{-4\eta t}\ \wedge\ \bigl\|\iota(\varphi_i(x_i(t)))-\iota(L^\ast)\bigr\|\le\sqrt{\tfrac{\Phi_3(0)}{\eta}}\,e^{-4\eta t}\qquad(t\ge0)$$
+
+### Lean のコメント（日本語訳）
+
+> 同じ実際の LUB・同じ抽象残差・同じ流れについて、定理 3 の入口の定量評価を得る。
+
+### 補題の説明
+
+前の `python_instance`（0 への**収束**）の、**定量版**です。各時刻 \(t\ge0\) で、共有零集合への距離と、各主体の表象の LUB への距離が、**初期の残差 \(\Phi_3(0)\) と指数 \(e^{-4\eta t}\) で上から押さえられます**（\(c=4\eta\)、\(C=1/\eta\)）。「極限として近づく」だけでなく、**速度つき**の主張になっています（本プロジェクトが定量的な結論を目指す方針に沿ったものです）。
+
+### 証明の概略
+
+1. 一般定理 `theorem3_two_distance_bounds_of_ac_ae_descent` を、\(c=4\eta\)、\(C=1/\eta\)、\(t_0=0\)、重み \(\eta_j=\eta\)、時刻 \(t\ge0\) で適用する（`python_instance` と同じ前提を、**固定した時刻 \(t\)** について使う）。
+2. 前提：共有残差の非負性 `sharedT_nonneg`、各項の非負性、TCZ の非空 `Lcfg_mem`、誤差境界 `error_bound`。
+3. AC：区間 \([0,t]\) 上で \(\Phi_3=\Phi_F\)（`potential_eq`）、\(\Phi_F\) は \(C^1\)（`contDiff_PhiF`）なので絶対連続。
+4. a.e. 下降：\(s>0\) の近傍で \(\Phi_3=\Phi_F\) なので、`hasDerivAt_PhiF` と `PhiF_decay` から \(\Phi_3'\le-8\eta\Phi_3\)（\(s=0\) は測度 0 なので除く）。
+
+----
 
 ## コメント修正記録
 
